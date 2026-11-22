@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoGlow | Vehicle Care, Made Simple</title>
+<style>
+:root{--ink:#142b3b;--muted:#647887;--teal:#087f8c;--teal2:#10a6a0;--pale:#eaf7f6;--line:#dce8ec;--white:#fff;--bg:#f5f9fb;--orange:#f4a340;--shadow:0 14px 35px rgba(24,57,75,.09)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{max-width:1120px;margin:auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-weight:850;font-size:1.3rem;letter-spacing:-.5px;color:var(--ink)}.brand span{color:var(--teal)}
+nav{display:flex;gap:7px;flex-wrap:wrap}nav button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:9px 12px;border-radius:9px;cursor:pointer}nav button.active,nav button:hover{background:var(--pale);color:var(--teal)}
+main{max-width:1120px;margin:auto;padding:30px 22px 70px}.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(120deg,#10384b,#087f8c 65%,#10a6a0);border-radius:24px;color:white;padding:52px 48px;display:grid;grid-template-columns:1.3fr .7fr;gap:25px;align-items:center;box-shadow:var(--shadow)}
+.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:.75rem;font-weight:800;color:#b9eeea}.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.05;margin:12px 0}.hero p{color:#e1f5f3;max-width:570px}.hero-art{font-size:7rem;text-align:center;filter:drop-shadow(0 12px 12px #063b4a66)}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;background:var(--teal);color:white;display:inline-block}.btn.light{background:white;color:var(--teal)}.btn.outline{background:transparent;border:1px solid var(--line);color:var(--ink)}.btn.danger{background:#fff0ef;color:#b83e35}.btn:disabled{opacity:.5;cursor:not-allowed}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:34px 0 16px}.section-head h2{margin:0;font-size:1.65rem}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:21px;box-shadow:0 5px 18px rgba(24,57,75,.035)}.card .emoji{font-size:2rem}.card h3{margin:9px 0 5px}.price{font-size:1.5rem;font-weight:850;color:var(--teal)}.tag{display:inline-block;background:var(--pale);color:var(--teal);font-size:.75rem;font-weight:800;padding:5px 9px;border-radius:30px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}.stat{background:#ffffff18;border:1px solid #ffffff30;border-radius:14px;padding:13px}.stat strong{display:block;font-size:1.35rem}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);max-width:820px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:.88rem;font-weight:750}input,select,textarea{font:inherit;border:1px solid #cbd9df;border-radius:9px;padding:11px 12px;background:#fff;color:var(--ink);width:100%}textarea{min-height:85px;resize:vertical}input:focus,select:focus,textarea:focus{outline:3px solid #10a6a022;border-color:var(--teal)}
+.notice{padding:12px 14px;border-radius:10px;background:#fff8e9;color:#78551e;font-size:.9rem;margin:15px 0}.success{background:#eaf8ef;color:#23683e}.error{background:#fff0ef;color:#a63831}.estimate{background:var(--pale);border-radius:12px;padding:15px;display:flex;justify-content:space-between;align-items:center;margin:15px 0}.estimate strong{font-size:1.4rem;color:var(--teal)}
+.provider-icon{width:50px;height:50px;border-radius:14px;background:var(--pale);display:grid;place-items:center;font-size:1.6rem}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:.9rem}th{background:#f0f7f8;color:#385565}.status{font-weight:800;color:var(--teal)}.empty{padding:28px;text-align:center;color:var(--muted);background:white;border:1px dashed #cbd9df;border-radius:14px}
+footer{text-align:center;padding:24px;color:var(--muted);border-top:1px solid var(--line);font-size:.85rem}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding:35px 25px}.hero-art{display:none}.grid{grid-template-columns:1fr 1fr}.nav{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){main{padding:20px 14px 50px}.grid,.form-grid,.stats{grid-template-columns:1fr}.field.full{grid-column:auto}.hero{border-radius:17px}.section-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="nav"><div class="brand">Auto<span>Glow</span> ✦</div><nav aria-label="Main navigation">
+<button class="active" data-page="home">Home</button><button data-page="services">Services</button><button data-page="providers">Providers</button><button data-page="booking">Book service</button><button data-page="tracking">Track request</button><button data-page="history">My bookings</button>
+</nav></div></header>
+<main>
+<section id="home" class="page active">
+<div class="hero"><div><div class="eyebrow">Vehicle care, made simple</div><h1>A cleaner ride.<br>A smoother journey.</h1><p>Book car washing and minor vehicle repair services through one simple demo platform. Compare service options, view sample providers and keep track of your requests.</p><button class="btn light" data-go="booking">Book a service →</button><div class="stats"><div class="stat"><strong>06</strong><span>Service options</span></div><div class="stat"><strong>03</strong><span>Sample providers</span></div><div class="stat"><strong>24/7</strong><span>Demo access</span></div></div></div><div class="hero-art">🚘✨</div></div>
+<div class="section-head"><div><span class="tag">Popular choices</span><h2>Services at a glance</h2></div><button class="btn outline" data-go="services">View all services</button></div><div class="grid">
+<div class="card"><div class="emoji">🫧</div><h3>Basic Wash</h3><p class="muted">Exterior wash and basic cleaning.</p><div class="price">₹299</div></div>
+<div class="card"><div class="emoji">✨</div><h3>Premium Wash</h3><p class="muted">Detailed exterior and interior cleaning.</p><div class="price">₹599</div></div>
+<div class="card"><div class="emoji">🛠️</div><h3>Minor Dent Repair</h3><p class="muted">Assessment and minor dent repair service.</p><div class="price">₹1,499</div></div>
+</div><div class="notice">Academic demonstration only: listed prices and providers are sample data. No real booking, payment, or service provider is contacted.</div>
+</section>
+<section id="services" class="page"><div class="section-head"><div><span class="tag">What we offer</span><h2>Our services</h2><p class="muted">Choose a service to see its sample starting price.</p></div></div><div class="grid" id="serviceCards"></div></section>
+<section id="providers" class="page"><div class="section-head"><div><span class="tag">Provider directory</span><h2>Service providers</h2><p class="muted">These are fictional sample providers for the project demonstration.</p></div></div><div class="grid">
+<div class="card"><div class="provider-icon">🧽</div><h3>ShinePoint Auto Care</h3><p class="muted">Car washing · Interior cleaning</p><span class="tag">Demo provider</span></div>
+<div class="card"><div class="provider-icon">🔧</div><h3>Precision Body Works</h3><p class="muted">Minor dents · Scratch repair</p><span class="tag">Demo provider</span></div>
+<div class="card"><div class="provider-icon">🚗</div><h3>Metro Motor Studio</h3><p class="muted">General vehicle care · Inspection</p><span class="tag">Demo provider</span></div>
+</div></section>
+<section id="booking" class="page"><div class="section-head"><div><span class="tag">FR3 · FR5</span><h2>Book a vehicle service</h2><p class="muted">Enter the details below to create a local demo booking.</p></div></div>
+<div class="panel"><form id="bookingForm"><div class="form-grid">
+<div class="field"><label for="customer">Customer name *</label><input id="customer" required maxlength="60" placeholder="Your name"></div>
+<div class="field"><label for="phone">Mobile number *</label><input id="phone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number"></div>
+<div class="field"><label for="vehicle">Vehicle model *</label><input id="vehicle" required maxlength="60" placeholder="e.g. Hyundai i20"></div>
+<div class="field"><label for="registration">Vehicle registration *</label><input id="registration" required maxlength="20" placeholder="e.g. KA01AB1234"></div>
+<div class="field"><label for="service">Select service *</label><select id="service" required></select></div>
+<div class="field"><label for="provider">Preferred provider *</label><select id="provider" required><option value="">Choose provider</option><option>ShinePoint Auto Care</option><option>Precision Body Works</option><option>Metro Motor Studio</option></select></div>
+<div class="field"><label for="date">Preferred date *</label><input id="date" type="date" required></div>
+<div class="field"><label for="time">Preferred time *</label><select id="time" required><option value="">Choose time</option><option>09:00 AM</option><option>11:00 AM</option><option>01:00 PM</option><option>03:00 PM</option><option>05:00 PM</option></select></div>
+<div class="field full"><label for="notes">Additional notes (optional)</label><textarea id="notes" maxlength="300" placeholder="Describe the service you need..."></textarea></div>
+</div><div class="estimate"><span>Estimated service cost</span><strong id="estimate">₹0</strong></div><button class="btn" type="submit">Create demo booking</button><div id="bookingMessage" aria-live="polite"></div></form></div></section>
+<section id="tracking" class="page"><div class="section-head"><div><span class="tag">FR6</span><h2>Track service request</h2><p class="muted">Enter the booking ID shown after creating a booking.</p></div></div><div class="panel"><form id="trackForm"><div class="field"><label for="trackId">Booking ID</label><input id="trackId" required placeholder="e.g. AG-123456"></div><br><button class="btn">Find booking</button></form><div id="trackResult"></div><div class="notice">Tracking status is demo data stored in this browser. It is not connected to a real vehicle or provider.</div></div></section>
+<section id="history" class="page"><div class="section-head"><div><span class="tag">FR7</span><h2>Bookings & service history</h2><p class="muted">Bookings are stored in this browser using local storage.</p></div><button class="btn outline" id="refreshHistory">Refresh</button></div><div id="historyContent"></div></section>
+</main><footer>AutoGlow · SDF Academic Project Prototype · Demo only</footer>
+<script>
+const services=[
+{name:"Basic Wash",price:299,desc:"Exterior wash and basic cleaning.",icon:"🫧"},
+{name:"Premium Wash",price:599,desc:"Detailed exterior and interior cleaning.",icon:"✨"},
+{name:"Interior Cleaning",price:499,desc:"Vacuuming and dashboard cleaning.",icon:"🧼"},
+{name:"Scratch Repair",price:799,desc:"Assessment for minor paint scratches.",icon:"🩹"},
+{name:"Minor Dent Repair",price:1499,desc:"Assessment for minor body dents.",icon:"🛠️"},
+{name:"General Inspection",price:399,desc:"Basic vehicle condition inspection.",icon:"🔍"}
+];
+const $=id=>document.getElementById(id);
+const readBookings=()=>{try{return JSON.parse(localStorage.getItem("autoglow_bookings")||"[]")}catch(e){return []}};
+const saveBookings=data=>localStorage.setItem("autoglow_bookings",JSON.stringify(data));
+function showPage(name){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="history")renderHistory();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+$("serviceCards").innerHTML=services.map(s=>`<article class="card"><div class="emoji">${s.icon}</div><h3>${s.name}</h3><p class="muted">${s.desc}</p><div class="price">₹${s.price.toLocaleString("en-IN")}</div><br><button class="btn" data-service="${s.name}">Choose service</button></article>`).join("");
+$("service").innerHTML='<option value="">Choose service</option>'+services.map(s=>`<option value="${s.name}">${s.name} — ₹${s.price.toLocaleString("en-IN")}</option>`).join("");
+document.addEventListener("click",e=>{if(e.target.matches("[data-service]")){$("service").value=e.target.dataset.service;updateEstimate();showPage("booking")}});
+function updateEstimate(){const s=services.find(x=>x.name===$("service").value);$("estimate").textContent=s?"₹"+s.price.toLocaleString("en-IN"):"₹0"}
+$("service").addEventListener("change",updateEstimate);
+const today=new Date();$("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+$("bookingForm").addEventListener("submit",e=>{e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;const chosen=services.find(s=>s.name===$("service").value);if(!chosen)return;const selectedDate=$("date").value;if(selectedDate<today.toISOString().slice(0,10)){$("bookingMessage").innerHTML='<div class="notice error">Please select today or a future date.</div>';return}
+const booking={id:"AG-"+Math.floor(100000+Math.random()*900000),customer:$("customer").value.trim(),phone:$("phone").value,vehicle:$("vehicle").value.trim(),registration:$("registration").value.trim().toUpperCase(),service:chosen.name,price:chosen.price,provider:$("provider").value,date:selectedDate,time:$("time").value,notes:$("notes").value.trim(),status:"Pending",created:new Date().toISOString()};
+const all=readBookings();all.unshift(booking);saveBookings(all);$("bookingMessage").innerHTML=`<div class="notice success"><strong>Demo booking created!</strong><br>Your booking ID is <strong>${booking.id}</strong>. Save this ID to track your request. Payment is not collected.</div><button type="button" class="btn outline" id="goHistory">View my bookings</button>`;$("goHistory").addEventListener("click",()=>showPage("history"));form.reset();updateEstimate();});
+$("trackForm").addEventListener("submit",e=>{e.preventDefault();const id=$("trackId").value.trim().toUpperCase();const b=readBookings().find(x=>x.id===id);$("trackResult").innerHTML=b?`<div class="card" style="margin-top:18px"><span class="tag">${b.status}</span><h3>${b.id}</h3><p><strong>${b.service}</strong> for ${b.vehicle}</p><p class="muted">Provider: ${b.provider}<br>Requested date: ${b.date} · ${b.time}</p><p>Estimated cost: <strong>₹${b.price.toLocaleString("en-IN")}</strong></p></div>`:'<div class="notice error">No booking found with that ID in this browser.</div>'});
+function renderHistory(){const all=readBookings();if(!all.length){$("historyContent").innerHTML='<div class="empty">No bookings yet. Create a booking to see it here.</div>';return}
+$("historyContent").innerHTML='<div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Vehicle / Service</th><th>Date</th><th>Cost</th><th>Status</th><th>Action</th></tr></thead><tbody>'+all.map(b=>`<tr><td><strong>${b.id}</strong></td><td>${escapeText(b.vehicle)}<br><span class="muted">${escapeText(b.service)}</span></td><td>${b.date}<br>${b.time}</td><td>₹${b.price.toLocaleString("en-IN")}</td><td class="status">${b.status}</td><td>${b.status==="Cancelled"?"—":`<button class="btn danger" data-cancel="${b.id}">Cancel</button>`}</td></tr>`).join("")+'</tbody></table></div><p class="muted">Demo records remain in this browser until its site data is cleared.</p>'}
+function escapeText(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+document.addEventListener("click",e=>{if(e.target.matches("[data-cancel]")){const id=e.target.dataset.cancel;const all=readBookings();const b=all.find(x=>x.id===id);if(b&&confirm("Cancel this demo booking?")){b.status="Cancelled";saveBookings(all);renderHistory()}}});
+$("refreshHistory").addEventListener("click",renderHistory);
+</script>
+</body></html>
