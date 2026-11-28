@@ -37,7 +37,7 @@ footer{text-align:center;padding:24px;color:var(--muted);border-top:1px solid va
 <div class="card"><div class="emoji">🫧</div><h3>Basic Wash</h3><p class="muted">Exterior wash and basic cleaning.</p><div class="price">₹299</div></div>
 <div class="card"><div class="emoji">✨</div><h3>Premium Wash</h3><p class="muted">Detailed exterior and interior cleaning.</p><div class="price">₹599</div></div>
 <div class="card"><div class="emoji">🛠️</div><h3>Minor Dent Repair</h3><p class="muted">Assessment and minor dent repair service.</p><div class="price">₹1,499</div></div>
-</div><div class="notice">Academic demonstration only: listed prices and providers are sample data. No real booking, payment, or service provider is contacted.</div>
+</div><div class="notice">Academic demonstration only: listed prices and providers are sample data. No real payment or service provider is contacted.</div>
 </section>
 <section id="services" class="page"><div class="section-head"><div><span class="tag">What we offer</span><h2>Our services</h2><p class="muted">Choose a service to see its sample starting price.</p></div></div><div class="grid" id="serviceCards"></div></section>
 <section id="providers" class="page"><div class="section-head"><div><span class="tag">Provider directory</span><h2>Service providers</h2><p class="muted">These are fictional sample providers for the project demonstration.</p></div></div><div class="grid">
@@ -45,7 +45,7 @@ footer{text-align:center;padding:24px;color:var(--muted);border-top:1px solid va
 <div class="card"><div class="provider-icon">🔧</div><h3>Precision Body Works</h3><p class="muted">Minor dents · Scratch repair</p><span class="tag">Demo provider</span></div>
 <div class="card"><div class="provider-icon">🚗</div><h3>Metro Motor Studio</h3><p class="muted">General vehicle care · Inspection</p><span class="tag">Demo provider</span></div>
 </div></section>
-<section id="booking" class="page"><div class="section-head"><div><span class="tag">FR3 · FR5</span><h2>Book a vehicle service</h2><p class="muted">Enter the details below to create a local demo booking.</p></div></div>
+<section id="booking" class="page"><div class="section-head"><div><span class="tag">FR3 · FR5</span><h2>Book a vehicle service</h2><p class="muted">Enter the details below to create a server-backed demo booking.</p></div></div>
 <div class="panel"><form id="bookingForm"><div class="form-grid">
 <div class="field"><label for="customer">Customer name *</label><input id="customer" required maxlength="60" placeholder="Your name"></div>
 <div class="field"><label for="phone">Mobile number *</label><input id="phone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number"></div>
@@ -56,11 +56,22 @@ footer{text-align:center;padding:24px;color:var(--muted);border-top:1px solid va
 <div class="field"><label for="date">Preferred date *</label><input id="date" type="date" required></div>
 <div class="field"><label for="time">Preferred time *</label><select id="time" required><option value="">Choose time</option><option>09:00 AM</option><option>11:00 AM</option><option>01:00 PM</option><option>03:00 PM</option><option>05:00 PM</option></select></div>
 <div class="field full"><label for="notes">Additional notes (optional)</label><textarea id="notes" maxlength="300" placeholder="Describe the service you need..."></textarea></div>
-</div><div class="estimate"><span>Estimated service cost</span><strong id="estimate">₹0</strong></div><button class="btn" type="submit">Create demo booking</button><div id="bookingMessage" aria-live="polite"></div></form></div></section>
-<section id="tracking" class="page"><div class="section-head"><div><span class="tag">FR6</span><h2>Track service request</h2><p class="muted">Enter the booking ID shown after creating a booking.</p></div></div><div class="panel"><form id="trackForm"><div class="field"><label for="trackId">Booking ID</label><input id="trackId" required placeholder="e.g. AG-123456"></div><br><button class="btn">Find booking</button></form><div id="trackResult"></div><div class="notice">Tracking status is demo data stored in this browser. It is not connected to a real vehicle or provider.</div></div></section>
-<section id="history" class="page"><div class="section-head"><div><span class="tag">FR7</span><h2>Bookings & service history</h2><p class="muted">Bookings are stored in this browser using local storage.</p></div><button class="btn outline" id="refreshHistory">Refresh</button></div><div id="historyContent"></div></section>
+</div><div class="estimate"><span>Estimated service cost</span><strong id="estimate">₹0</strong></div><button class="btn" type="submit">Create booking</button><div id="bookingMessage" aria-live="polite"></div></form></div></section>
+<section id="tracking" class="page"><div class="section-head"><div><span class="tag">FR6</span><h2>Track service request</h2><p class="muted">Enter the booking ID shown after creating a booking.</p></div></div><div class="panel"><form id="trackForm"><div class="field"><label for="trackId">Booking ID</label><input id="trackId" required placeholder="e.g. AG-123456"></div><br><button class="btn">Find booking</button></form><div id="trackResult"></div><div class="notice">Booking details are retrieved from the AutoGlow server database.</div></div></section>
+<section id="history" class="page"><div class="section-head"><div><span class="tag">FR7</span><h2>Bookings & service history</h2><p class="muted">Bookings are stored in the server database.</p></div><button class="btn outline" id="refreshHistory">Refresh</button></div><div id="historyContent"></div></section>
 </main><footer>AutoGlow · SDF Academic Project Prototype · Demo only</footer>
+<script src="config.js"></script>
 <script>
+const API_BASE = window.AUTOGLOW_API_BASE || "";
+const api = async (path, options={}) => {
+  const response = await fetch(API_BASE + path, {
+    headers: {"Content-Type":"application/json", ...(options.headers||{})},
+    ...options
+  });
+  const data = await response.json().catch(()=>({error:"Server returned an invalid response."}));
+  if (!response.ok) throw new Error(data.error || "Request failed.");
+  return data;
+};
 const services=[
 {name:"Basic Wash",price:299,desc:"Exterior wash and basic cleaning.",icon:"🫧"},
 {name:"Premium Wash",price:599,desc:"Detailed exterior and interior cleaning.",icon:"✨"},
@@ -70,8 +81,6 @@ const services=[
 {name:"General Inspection",price:399,desc:"Basic vehicle condition inspection.",icon:"🔍"}
 ];
 const $=id=>document.getElementById(id);
-const readBookings=()=>{try{return JSON.parse(localStorage.getItem("autoglow_bookings")||"[]")}catch(e){return []}};
-const saveBookings=data=>localStorage.setItem("autoglow_bookings",JSON.stringify(data));
 function showPage(name){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="history")renderHistory();window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
@@ -81,14 +90,37 @@ document.addEventListener("click",e=>{if(e.target.matches("[data-service]")){$("
 function updateEstimate(){const s=services.find(x=>x.name===$("service").value);$("estimate").textContent=s?"₹"+s.price.toLocaleString("en-IN"):"₹0"}
 $("service").addEventListener("change",updateEstimate);
 const today=new Date();$("date").min=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
-$("bookingForm").addEventListener("submit",e=>{e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;const chosen=services.find(s=>s.name===$("service").value);if(!chosen)return;const selectedDate=$("date").value;if(selectedDate<today.toISOString().slice(0,10)){$("bookingMessage").innerHTML='<div class="notice error">Please select today or a future date.</div>';return}
-const booking={id:"AG-"+Math.floor(100000+Math.random()*900000),customer:$("customer").value.trim(),phone:$("phone").value,vehicle:$("vehicle").value.trim(),registration:$("registration").value.trim().toUpperCase(),service:chosen.name,price:chosen.price,provider:$("provider").value,date:selectedDate,time:$("time").value,notes:$("notes").value.trim(),status:"Pending",created:new Date().toISOString()};
-const all=readBookings();all.unshift(booking);saveBookings(all);$("bookingMessage").innerHTML=`<div class="notice success"><strong>Demo booking created!</strong><br>Your booking ID is <strong>${booking.id}</strong>. Save this ID to track your request. Payment is not collected.</div><button type="button" class="btn outline" id="goHistory">View my bookings</button>`;$("goHistory").addEventListener("click",()=>showPage("history"));form.reset();updateEstimate();});
-$("trackForm").addEventListener("submit",e=>{e.preventDefault();const id=$("trackId").value.trim().toUpperCase();const b=readBookings().find(x=>x.id===id);$("trackResult").innerHTML=b?`<div class="card" style="margin-top:18px"><span class="tag">${b.status}</span><h3>${b.id}</h3><p><strong>${b.service}</strong> for ${b.vehicle}</p><p class="muted">Provider: ${b.provider}<br>Requested date: ${b.date} · ${b.time}</p><p>Estimated cost: <strong>₹${b.price.toLocaleString("en-IN")}</strong></p></div>`:'<div class="notice error">No booking found with that ID in this browser.</div>'});
-function renderHistory(){const all=readBookings();if(!all.length){$("historyContent").innerHTML='<div class="empty">No bookings yet. Create a booking to see it here.</div>';return}
-$("historyContent").innerHTML='<div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Vehicle / Service</th><th>Date</th><th>Cost</th><th>Status</th><th>Action</th></tr></thead><tbody>'+all.map(b=>`<tr><td><strong>${b.id}</strong></td><td>${escapeText(b.vehicle)}<br><span class="muted">${escapeText(b.service)}</span></td><td>${b.date}<br>${b.time}</td><td>₹${b.price.toLocaleString("en-IN")}</td><td class="status">${b.status}</td><td>${b.status==="Cancelled"?"—":`<button class="btn danger" data-cancel="${b.id}">Cancel</button>`}</td></tr>`).join("")+'</tbody></table></div><p class="muted">Demo records remain in this browser until its site data is cleared.</p>'}
-function escapeText(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-document.addEventListener("click",e=>{if(e.target.matches("[data-cancel]")){const id=e.target.dataset.cancel;const all=readBookings();const b=all.find(x=>x.id===id);if(b&&confirm("Cancel this demo booking?")){b.status="Cancelled";saveBookings(all);renderHistory()}}});
+$("bookingForm").addEventListener("submit",async e=>{
+ e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
+ const chosen=services.find(s=>s.name===$("service").value);if(!chosen)return;
+ const selectedDate=$("date").value;
+ if(selectedDate<new Date().toLocaleDateString("en-CA")){$("bookingMessage").innerHTML='<div class="notice error">Please select today or a future date.</div>';return}
+ const booking={customer:$("customer").value.trim(),phone:$("phone").value.trim(),vehicle:$("vehicle").value.trim(),registration:$("registration").value.trim().toUpperCase(),service:chosen.name,price:chosen.price,provider:$("provider").value,date:selectedDate,time:$("time").value,notes:$("notes").value.trim()};
+ const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent="Saving...";
+ try{
+  const result=await api("/api/bookings",{method:"POST",body:JSON.stringify(booking)});
+  $("bookingMessage").innerHTML=`<div class="notice success"><strong>Booking saved successfully!</strong><br>Your booking ID is <strong>${escapeText(result.booking.id)}</strong>. Save this ID to track your request. Payment is not collected.</div><button type="button" class="btn outline" id="goHistory">View bookings</button>`;
+  $("goHistory").addEventListener("click",()=>showPage("history"));form.reset();updateEstimate();
+ }catch(err){$("bookingMessage").innerHTML=`<div class="notice error">${escapeText(err.message)}. Make sure the backend server is running.</div>`}
+ finally{submit.disabled=false;submit.textContent="Create booking"}
+});
+$("trackForm").addEventListener("submit",async e=>{
+ e.preventDefault();const id=$("trackId").value.trim().toUpperCase();$("trackResult").innerHTML='<p class="muted">Searching...</p>';
+ try{const data=await api("/api/bookings/"+encodeURIComponent(id));const b=data.booking;
+ $("trackResult").innerHTML=`<div class="card" style="margin-top:18px"><span class="tag">${escapeText(b.status)}</span><h3>${escapeText(b.id)}</h3><p><strong>${escapeText(b.service)}</strong> for ${escapeText(b.vehicle)}</p><p class="muted">Provider: ${escapeText(b.provider)}<br>Requested date: ${escapeText(b.date)} · ${escapeText(b.time)}</p><p>Estimated cost: <strong>₹${Number(b.price).toLocaleString("en-IN")}</strong></p></div>`;
+ }catch(err){$("trackResult").innerHTML=`<div class="notice error">${escapeText(err.message)}</div>`}
+});
+async function renderHistory(){
+ $("historyContent").innerHTML='<p class="muted">Loading bookings...</p>';
+ try{const data=await api("/api/bookings");const all=data.bookings;
+ if(!all.length){$("historyContent").innerHTML='<div class="empty">No bookings yet. Create a booking to see it here.</div>';return}
+ $("historyContent").innerHTML='<div class="table-wrap"><table><thead><tr><th>Booking ID</th><th>Vehicle / Service</th><th>Date</th><th>Cost</th><th>Status</th><th>Action</th></tr></thead><tbody>'+all.map(b=>`<tr><td><strong>${escapeText(b.id)}</strong></td><td>${escapeText(b.vehicle)}<br><span class="muted">${escapeText(b.service)}</span></td><td>${escapeText(b.date)}<br>${escapeText(b.time)}</td><td>₹${Number(b.price).toLocaleString("en-IN")}</td><td class="status">${escapeText(b.status)}</td><td>${b.status==="Cancelled"?"—":`<button class="btn danger" data-cancel="${escapeText(b.id)}">Cancel</button>`}</td></tr>`).join("")+'</tbody></table></div><p class="muted">Bookings are stored in the server database and are shared across devices.</p>';
+ }catch(err){$("historyContent").innerHTML=`<div class="notice error">${escapeText(err.message)}. Make sure the backend server is running.</div>`}
+}
+function escapeText(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+document.addEventListener("click",async e=>{
+ if(e.target.matches("[data-cancel]")){const id=e.target.dataset.cancel;if(confirm("Cancel this booking?")){e.target.disabled=true;try{await api("/api/bookings/"+encodeURIComponent(id)+"/cancel",{method:"POST"});await renderHistory()}catch(err){alert(err.message);e.target.disabled=false}}}
+});
 $("refreshHistory").addEventListener("click",renderHistory);
 </script>
 </body></html>

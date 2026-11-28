@@ -1,0 +1,32 @@
+AUTOGLOW — BACKEND DEPLOYMENT
+================================
+
+WHAT IS READY
+- Flask REST API (app.py)
+- SQLite database (created automatically)
+- Booking creation, lookup/tracking, history, cancellation
+- Admin-only status updates (ADMIN_KEY)
+- Existing AutoGlow page wired to the API through config.js
+- Render Blueprint file (render.yaml)
+
+IMPORTANT
+The backend code is complete, but it is NOT publicly hosted yet. A hosting account must authorize deployment. Do not send anyone your account password.
+
+DEPLOYMENT
+1. Upload the contents of this folder to a GitHub repository (keep app.py, requirements.txt, render.yaml, index.html and config.js at the repository root).
+2. In Render, create a new Blueprint deployment and select that repository. Render reads render.yaml and creates the web service.
+3. Wait for deployment to finish. Copy the backend service URL, for example https://autoglow-backend.onrender.com.
+4. Edit config.js and replace https://YOUR-BACKEND-SERVICE-URL with the actual service URL (no trailing slash).
+5. Commit/push the updated config.js and index.html to the GitHub Pages repository.
+6. Open https://gchiarg4-blip.github.io/autoglow-website/ and test: create a booking, copy its AG-... ID, track it, then view history.
+
+LOCAL TEST
+1. Install Python 3.10+ if not already installed.
+2. Double-click Start_AutoGlow_Backend.bat.
+3. Open http://127.0.0.1:5000.
+4. For local-only testing, change config.js to: window.AUTOGLOW_API_BASE = "";
+
+NOTES
+- The free hosting filesystem may be temporary; SQLite records can be lost when the service is restarted/redeployed. For durable production storage, use a managed database.
+- The site is an academic demo. Do not enter real personal or vehicle information.
+- The public history and tracking API omits customer phone numbers, names and private notes.

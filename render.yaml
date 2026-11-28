@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: autoglow-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://gchiarg4-blip.github.io,http://127.0.0.1:5000,http://localhost:5000
+      - key: ADMIN_KEY
+        generateValue: true
